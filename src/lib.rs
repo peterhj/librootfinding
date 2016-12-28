@@ -2,17 +2,22 @@ extern crate arithmetic;
 
 use arithmetic::*;
 
+#[derive(Clone, Copy, Debug)]
 pub enum RootError {
   BadBracket,
 }
 
-pub type RootResult<T> = Result<T, RootError>;
+pub type RootResult<T> = Result<T, (T, RootError)>;
 
-pub fn bisection_root<T, F>(mut x_lo: T, mut x_hi: T, eps: T, mut func: F) -> RootResult<T> where T: Copy + PartialOrd + Field, F: FnMut(T) -> T {
+pub fn bisection_root<T, F>(mut x_lo: T, mut x_hi: T, eps: T, mut func: F) -> RootResult<T> where T: Copy + PartialOrd + PseudoField, F: FnMut(T) -> T {
   let mut y_lo = func(x_lo);
   let mut y_hi = func(x_hi);
   if y_lo * y_hi > T::zero() {
-    return Err(RootError::BadBracket);
+    if y_lo.mag() <= y_hi.mag() {
+      return Err((x_lo, RootError::BadBracket));
+    } else {
+      return Err((x_hi, RootError::BadBracket));
+    }
   } else if y_lo == T::zero() {
     return Ok(x_lo);
   } else if y_hi == T::zero() {

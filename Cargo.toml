@@ -7,5 +7,8 @@ authors = ["Peter Jin <peterhaijin@gmail.com>"]
 name = "rootfinding"
 path = "src/lib.rs"
 
+[dev-dependencies]
+dualnum = { path = "../libdualnum" }
+
 [dependencies]
 arithmetic = { path = "../libarithmetic" }
